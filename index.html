@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kumbh Sahayak - Smart Help. Safe Pilgrimage.</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splashScreen" class="screen">
+        <div class="language-selector-top">
+            <select id="languageSelect">
+                <option value="en">English</option>
+                <option value="hi">हिंदी</option>
+                <option value="mr">मराठी</option>
+            </select>
+        </div>
+        
+        <div class="splash-content">
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-hands-helping"></i>
+                    <span class="logo-text">कुंभ सहायक</span>
+                </div>
+                <h1 class="splash-title" data-translate="app_title">Kumbh Sahayak</h1>
+                <p class="splash-tagline" data-translate="tagline">Smart Help. Safe Pilgrimage.</p>
+            </div>
+            <div class="splash-animation">
+                <div class="ai-node"></div>
+                <div class="ai-node"></div>
+                <div class="ai-node"></div>
+            </div>
+            <button id="enterApp" class="btn-primary" data-translate="enter_app">Enter Application</button>
+        </div>
+    </div>
+
+    <!-- Authentication Screen -->
+    <div id="authScreen" class="screen" style="display: none;">
+        <div class="language-selector-top">
+            <select id="languageSelectAuth">
+                <option value="en">English</option>
+                <option value="hi">हिंदी</option>
+                <option value="mr">मराठी</option>
+            </select>
+        </div>
+        
+        <div class="auth-container">
+            <div class="auth-header">
+                <h2 data-translate="select_role">Select Your Role</h2>
+            </div>
+            
+            <div class="role-selection">
+                <div class="role-card" id="pilgrimRole">
+                    <div class="role-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3 data-translate="pilgrim">Pilgrim / Citizen</h3>
+                    <p data-translate="pilgrim_desc">Access help, submit grievances, emergency services</p>
+                </div>
+                
+                <div class="role-card" id="adminRole">
+                    <div class="role-icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h3 data-translate="admin">Admin / Authority</h3>
+                    <p data-translate="admin_desc">Monitor, manage, and resolve grievances</p>
+                </div>
+            </div>
+            
+            <div class="auth-form" id="loginForm" style="display: none;">
+                <h3 data-translate="login">Login</h3>
+                <div class="form-group">
+                    <input type="text" id="phoneNumber" placeholder="Phone Number">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" placeholder="Password">
+                </div>
+                <button class="btn-primary" id="loginBtn" data-translate="login_btn">Login</button>
+                <button class="btn-secondary" id="backToRoles" data-translate="back">Back to Roles</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pilgrim Dashboard -->
+    <div id="pilgrimDashboard" class="dashboard" style="display: none;">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <div class="logo-small">
+                    <i class="fas fa-hands-helping"></i>
+                    <span data-translate="app_title">Kumbh Sahayak</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="language-selector-inline">
+                    <select id="languageSelectPilgrim">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी</option>
+                        <option value="mr">मराठी</option>
+                    </select>
+                </div>
+                <div class="user-info">
+                    <span id="userName" data-translate="welcome">Welcome, Pilgrim</span>
+                </div>
+                <button class="btn-logout" id="pilgrimLogout" data-translate="logout">Logout</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-content">
+            <div class="container">
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h2 data-translate="quick_actions">Quick Actions</h2>
+                    <div class="action-grid">
+                        <div class="action-card ai-chatbot" id="openChatbot">
+                            <div class="action-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h3 data-translate="ai_chatbot">AI Chatbot</h3>
+                            <p data-translate="ai_chatbot_desc">Get instant answers in your language</p>
+                        </div>
+                        
+                        <div class="action-card grievance" id="openGrievance">
+                            <div class="action-icon">
+                                <i class="fas fa-comment-medical"></i>
+                            </div>
+                            <h3 data-translate="submit_grievance">Submit Grievance</h3>
+                            <p data-translate="submit_grievance_desc">Report issues via text, audio or video</p>
+                        </div>
+                        
+                        <div class="action-card emergency" id="openEmergency">
+                            <div class="action-icon">
+                                <i class="fas fa-bell"></i>
+                            </div>
+                            <h3 data-translate="emergency_sos">Emergency SOS</h3>
+                            <p data-translate="emergency_sos_desc">One-tap emergency alert</p>
+                        </div>
+                        
+                        <div class="action-card navigation" id="openNavigation">
+                            <div class="action-icon">
+                                <i class="fas fa-map-marked-alt"></i>
+                            </div>
+                            <h3 data-translate="smart_navigation">Smart Navigation</h3>
+                            <p data-translate="smart_navigation_desc">Maps with AR directions</p>
+                        </div>
+                        
+                        <div class="action-card info" id="openInfo">
+                            <div class="action-icon">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <h3 data-translate="verified_info">Verified Information</h3>
+                            <p data-translate="verified_info_desc">Official announcements & alerts</p>
+                        </div>
+                        
+                        <div class="action-card tracking" id="openTracking">
+                            <div class="action-icon">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <h3 data-translate="track_grievance">Track Grievance</h3>
+                            <p data-translate="track_grievance_desc">Check status of your reports</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Updates -->
+                <div class="live-updates">
+                    <h2 data-translate="live_updates">Live Updates</h2>
+                    <div class="updates-grid">
+                        <div class="update-card">
+                            <div class="update-header">
+                                <span class="update-badge safety" data-translate="safety">Safety</span>
+                                <span class="update-time" data-translate="just_now">Just now</span>
+                            </div>
+                            <p data-translate="update1">Crowd density normal at Main Bathing Ghat</p>
+                        </div>
+                        <div class="update-card">
+                            <div class="update-header">
+                                <span class="update-badge ritual" data-translate="ritual">Ritual</span>
+                                <span class="update-time" data-translate="30_min">30 min ago</span>
+                            </div>
+                            <p data-translate="update2">Evening Aarti scheduled at 7:00 PM</p>
+                        </div>
+                        <div class="update-card">
+                            <div class="update-header">
+                                <span class="update-badge weather" data-translate="weather">Weather</span>
+                                <span class="update-time" data-translate="1_hr">1 hour ago</span>
+                            </div>
+                            <p data-translate="update3">Clear weather expected throughout the day</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Chatbot Modal -->
+        <div id="chatbotModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 data-translate="ai_assistant">AI Assistant</h2>
+                    <span class="close-modal">&times;</span>
+                </div>
+                <div class="chatbot-body">
+                    <div class="chatbot-messages" id="chatMessages">
+                        <div class="message ai-message">
+                            <p data-translate="chat_welcome">Namaste! I'm your AI assistant. How can I help you today? You can ask about facilities, directions, rituals, or report issues.</p>
+                        </div>
+                    </div>
+                    <div class="chatbot-input">
+                        <input type="text" id="chatInput" placeholder="Type your message..." data-translate="type_message">
+                        <button id="sendMessage" data-translate="send">Send</button>
+                        <button id="voiceInput" class="voice-btn">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grievance Modal -->
+        <div id="grievanceModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 data-translate="submit_grievance">Submit Grievance</h2>
+                    <span class="close-modal">&times;</span>
+                </div>
+                <div class="grievance-body">
+                    <div class="grievance-types">
+                        <div class="type-option active" data-type="text">
+                            <i class="fas fa-font"></i>
+                            <span data-translate="text">Text</span>
+                        </div>
+                        <div class="type-option" data-type="audio">
+                            <i class="fas fa-microphone"></i>
+                            <span data-translate="audio">Audio</span>
+                        </div>
+                        <div class="type-option" data-type="video">
+                            <i class="fas fa-video"></i>
+                            <span data-translate="video">Video</span>
+                        </div>
+                    </div>
+
+                    <div class="grievance-form">
+                        <div class="form-section text-section active">
+                            <textarea id="grievanceText" placeholder="Describe your issue..." data-translate="describe_issue"></textarea>
+                        </div>
+                        
+                        <div class="form-section audio-section">
+                            <div class="audio-recorder">
+                                <button id="recordAudio" class="btn-record">
+                                    <i class="fas fa-microphone"></i>
+                                    <span data-translate="record_audio">Record Audio</span>
+                                </button>
+                                <div class="audio-visualizer" id="audioVisualizer"></div>
+                                <audio id="audioPreview" controls style="display: none;"></audio>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section video-section">
+                            <div class="video-recorder">
+                                <button id="recordVideo" class="btn-record">
+                                    <i class="fas fa-video"></i>
+                                    <span data-translate="record_video">Record Video</span>
+                                </button>
+                                <video id="videoPreview" controls style="display: none;"></video>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label data-translate="category">Category</label>
+                            <select id="grievanceCategory">
+                                <option value="sanitation" data-translate="sanitation">Sanitation</option>
+                                <option value="security" data-translate="security">Security</option>
+                                <option value="medical" data-translate="medical">Medical</option>
+                                <option value="crowd" data-translate="crowd">Crowd Management</option>
+                                <option value="other" data-translate="other">Other</option>
+                            </select>
+                        </div>
+
+                        <button class="btn-primary btn-submit" id="submitGrievanceBtn" data-translate="submit_grievance">Submit Grievance</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Processing Modal -->
+        <div id="aiProcessingModal" class="modal" style="display: none;">
+            <div class="modal-content ai-processing-modal">
+                <div class="modal-header">
+                    <h2 data-translate="ai_processing">AI Processing Your Grievance</h2>
+                </div>
+                <div class="ai-processing-body">
+                    <div class="ai-processing-steps">
+                        <!-- Step 1: Language Detection -->
+                        <div class="ai-step" id="step1">
+                            <div class="step-icon">
+                                <i class="fas fa-language"></i>
+                            </div>
+                            <div class="step-content">
+                                <h4 data-translate="language_detection">Language Detection</h4>
+                                <div class="step-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="progress1"></div>
+                                    </div>
+                                    <span class="step-status" id="status1" data-translate="detecting">Detecting...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Department Routing -->
+                        <div class="ai-step" id="step2">
+                            <div class="step-icon">
+                                <i class="fas fa-route"></i>
+                            </div>
+                            <div class="step-content">
+                                <h4 data-translate="department_routing">Department Routing</h4>
+                                <div class="step-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="progress2"></div>
+                                    </div>
+                                    <span class="step-status" id="status2" data-translate="analyzing">Analyzing...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Priority Assessment -->
+                        <div class="ai-step" id="step3">
+                            <div class="step-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="step-content">
+                                <h4 data-translate="priority_assessment">Priority Assessment</h4>
+                                <div class="step-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="progress3"></div>
+                                    </div>
+                                    <span class="step-status" id="status3" data-translate="assessing">Assessing...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 4: Submission -->
+                        <div class="ai-step" id="step4">
+                            <div class="step-icon">
+                                <i class="fas fa-paper-plane"></i>
+                            </div>
+                            <div class="step-content">
+                                <h4 data-translate="submitting">Submitting to Admin</h4>
+                                <div class="step-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="progress4"></div>
+                                    </div>
+                                    <span class="step-status" id="status4" data-translate="sending">Sending...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-processing-visual">
+                        <div class="ai-visualizer">
+                            <div class="pulse-circle"></div>
+                            <div class="ai-node"></div>
+                            <div class="ai-node"></div>
+                            <div class="ai-node"></div>
+                            <div class="ai-node"></div>
+                        </div>
+                        <div class="ai-message" id="aiMessage">
+                            <i class="fas fa-brain"></i>
+                            <span data-translate="processing_message">AI is processing your grievance...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div id="successModal" class="modal" style="display: none;">
+            <div class="modal-content success-modal">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2 data-translate="success_title">Grievance Submitted Successfully!</h2>
+                <div class="success-details">
+                    <div class="detail-item">
+                        <span data-translate="grievance_id">Grievance ID:</span>
+                        <strong id="grievanceIdDisplay">KM2024-05678</strong>
+                    </div>
+                    <div class="detail-item">
+                        <span data-translate="department">Department:</span>
+                        <span id="departmentDisplay">Sanitation Department</span>
+                    </div>
+                    <div class="detail-item">
+                        <span data-translate="priority">Priority:</span>
+                        <span class="priority-medium" id="priorityDisplay">Medium</span>
+                    </div>
+                    <div class="detail-item">
+                        <span data-translate="estimated_time">Estimated Resolution:</span>
+                        <span id="etaDisplay">2-4 hours</span>
+                    </div>
+                </div>
+                <p class="success-message" data-translate="success_message">
+                    Your grievance has been sent to the concerned department. 
+                    You can track the status in the Tracking section.
+                </p>
+                <div class="success-actions">
+                    <button class="btn-primary" id="trackGrievanceBtn" data-translate="track_now">Track Now</button>
+                    <button class="btn-secondary" id="closeSuccessBtn" data-translate="close">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Emergency Modal -->
+        <div id="emergencyModal" class="modal">
+            <div class="modal-content emergency-modal">
+                <div class="emergency-header">
+                    <h2 data-translate="emergency_sos">EMERGENCY SOS</h2>
+                    <p data-translate="sos_warning">This will alert nearby authorities with your location</p>
+                </div>
+                <div class="emergency-types">
+                    <div class="emergency-option" data-type="medical">
+                        <i class="fas fa-ambulance"></i>
+                        <span data-translate="medical_emergency">Medical Emergency</span>
+                    </div>
+                    <div class="emergency-option" data-type="police">
+                        <i class="fas fa-shield-alt"></i>
+                        <span data-translate="police_assistance">Police Assistance</span>
+                    </div>
+                    <div class="emergency-option" data-type="fire">
+                        <i class="fas fa-fire"></i>
+                        <span data-translate="fire_emergency">Fire Emergency</span>
+                    </div>
+                    <div class="emergency-option" data-type="other">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span data-translate="other_emergency">Other Emergency</span>
+                    </div>
+                </div>
+                <div class="emergency-footer">
+                    <button class="btn-sos" id="triggerSOS">
+                        <i class="fas fa-bell"></i>
+                        <span data-translate="tap_emergency">TAP FOR EMERGENCY</span>
+                    </button>
+                    <p class="sos-note" data-translate="sos_note">Your location will be shared automatically</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Modal -->
+        <div id="navigationModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 data-translate="smart_navigation">Smart Navigation</h2>
+                    <span class="close-modal">&times;</span>
+                </div>
+                <div class="navigation-body">
+                    <div id="map" style="height: 400px; width: 100%;"></div>
+                    <div class="navigation-options">
+                        <div class="nav-option active" data-location="ghat">
+                            <i class="fas fa-water"></i>
+                            <span data-translate="bathing_ghats">Bathing Ghats</span>
+                        </div>
+                        <div class="nav-option" data-location="toilet">
+                            <i class="fas fa-restroom"></i>
+                            <span data-translate="toilets">Toilets</span>
+                        </div>
+                        <div class="nav-option" data-location="medical">
+                            <i class="fas fa-hospital"></i>
+                            <span data-translate="medical_camps">Medical Camps</span>
+                        </div>
+                        <div class="nav-option" data-location="help">
+                            <i class="fas fa-question-circle"></i>
+                            <span data-translate="help_desks">Help Desks</span>
+                        </div>
+                    </div>
+                    <button class="btn-ar" id="startAR" data-translate="start_ar">Start AR Navigation</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tracking Modal -->
+        <div id="trackingModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 data-translate="grievance_tracking">Grievance Tracking</h2>
+                    <span class="close-modal">&times;</span>
+                </div>
+                <div class="tracking-body">
+                    <div class="tracking-timeline">
+                        <div class="timeline-step completed">
+                            <div class="step-circle">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="step-info">
+                                <h4 data-translate="submitted">Submitted</h4>
+                                <p data-translate="submitted_time">2 hours ago</p>
+                            </div>
+                        </div>
+                        <div class="timeline-step completed">
+                            <div class="step-circle">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="step-info">
+                                <h4 data-translate="assigned">Assigned</h4>
+                                <p data-translate="assigned_time">1 hour ago</p>
+                            </div>
+                        </div>
+                        <div class="timeline-step active">
+                            <div class="step-circle">
+                                <i class="fas fa-spinner"></i>
+                            </div>
+                            <div class="step-info">
+                                <h4 data-translate="in_progress">In Progress</h4>
+                                <p data-translate="progress_time">Currently being resolved</p>
+                            </div>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="step-circle">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="step-info">
+                                <h4 data-translate="resolved">Resolved</h4>
+                                <p data-translate="eta">ETA: 2 hours</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tracking-details">
+                        <div class="detail-card">
+                            <h4 data-translate="grievance_id">Grievance ID</h4>
+                            <p id="trackingGrievanceId">KM2024-05678</p>
+                        </div>
+                        <div class="detail-card">
+                            <h4 data-translate="department">Department</h4>
+                            <p data-translate="sanitation_dept">Sanitation Department</p>
+                        </div>
+                        <div class="detail-card">
+                            <h4 data-translate="priority">Priority</h4>
+                            <p class="priority-medium" data-translate="medium">Medium</p>
+                        </div>
+                        <div class="detail-card">
+                            <h4 data-translate="assigned_officer">Assigned Officer</h4>
+                            <p data-translate="officer_name">Officer Rajesh Kumar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Hub Modal -->
+        <div id="infoModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 data-translate="verified_info">Verified Information Hub</h2>
+                    <span class="close-modal">&times;</span>
+                </div>
+                <div class="info-body">
+                    <div class="info-card verified">
+                        <div class="info-header">
+                            <span class="info-badge" data-translate="verified">✓ Verified</span>
+                            <span class="info-time" data-translate="just_now">Just now</span>
+                        </div>
+                        <h4 data-translate="info_title1">Main Ghat Capacity Update</h4>
+                        <p data-translate="info_desc1">Current capacity at 65%. Normal entry permitted.</p>
+                    </div>
+                    <div class="info-card verified">
+                        <div class="info-header">
+                            <span class="info-badge" data-translate="verified">✓ Verified</span>
+                            <span class="info-time" data-translate="30_min">30 min ago</span>
+                        </div>
+                        <h4 data-translate="info_title2">Weather Advisory</h4>
+                        <p data-translate="info_desc2">Clear skies expected. No rain forecast for next 24 hours.</p>
+                    </div>
+                    <div class="info-card fake">
+                        <div class="info-header">
+                            <span class="info-badge fake" data-translate="fake_news">⚠ Fake News Detected</span>
+                        </div>
+                        <h4 data-translate="info_title3">False Closure Alert</h4>
+                        <p data-translate="info_desc3">Report: "All ghats closed due to overcrowding" - THIS IS FALSE</p>
+                    </div>
+                    <div class="info-card verified">
+                        <div class="info-header">
+                            <span class="info-badge" data-translate="verified">✓ Verified</span>
+                            <span class="info-time" data-translate="1_hr">1 hour ago</span>
+                        </div>
+                        <h4 data-translate="info_title4">Medical Camp Locations</h4>
+                        <p data-translate="info_desc4">24/7 medical camps operational at Zones A, C, and E.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="admin-dashboard" style="display: none;">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-header-left">
+                <div class="admin-logo">
+                    <i class="fas fa-user-shield"></i>
+                    <span data-translate="admin_panel">Admin Panel</span>
+                </div>
+            </div>
+            <div class="admin-header-right">
+                <div class="language-selector-inline">
+                    <select id="languageSelectAdmin">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी</option>
+                        <option value="mr">मराठी</option>
+                    </select>
+                </div>
+                <div class="notification-badge" id="adminNotificationBadge">
+                    <i class="fas fa-bell"></i>
+                    <span id="notificationCount">0</span>
+                </div>
+                <button class="btn-logout" id="adminLogout" data-translate="logout">Logout</button>
+            </div>
+        </header>
+
+        <!-- Grievance Notification Panel -->
+        <div class="grievance-notification-panel" id="grievanceNotificationPanel">
+            <div class="notification-header">
+                <h3><i class="fas fa-bell"></i> <span data-translate="new_grievances">New Grievances</span></h3>
+                <button class="btn-clear" id="clearNotifications" data-translate="clear_all">Clear All</button>
+            </div>
+            <div class="notification-list" id="notificationList">
+                <!-- Dynamic notifications will be added here -->
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <div class="container">
+                <!-- KPI Cards -->
+                <div class="kpi-section">
+                    <h2 data-translate="dashboard">Dashboard</h2>
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <div class="kpi-info">
+                                <h3 id="totalGrievances">0</h3>
+                                <p data-translate="total_grievances">Total Grievances</p>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="kpi-info">
+                                <h3 id="activeCases">0</h3>
+                                <p data-translate="active_cases">Active Cases</p>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="kpi-info">
+                                <h3 id="emergencyCases">0</h3>
+                                <p data-translate="emergency_cases">Emergency Cases</p>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <i class="fas fa-stopwatch"></i>
+                            </div>
+                            <div class="kpi-info">
+                                <h3 id="avgResolution">0h</h3>
+                                <p data-translate="avg_resolution">Avg Resolution Time</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Department Control -->
+                <div class="department-section">
+                    <h2 data-translate="department_control">Department Control</h2>
+                    <div class="department-grid">
+                        <div class="department-card police">
+                            <h3 data-translate="police">Police</h3>
+                            <div class="dept-stats">
+                                <span class="stat new" data-translate="new_cases">New: <span id="policeNew">0</span></span>
+                                <span class="stat progress" data-translate="in_progress">Progress: <span id="policeProgress">0</span></span>
+                                <span class="stat delayed" data-translate="delayed">Delayed: <span id="policeDelayed">0</span></span>
+                            </div>
+                        </div>
+                        <div class="department-card medical">
+                            <h3 data-translate="medical">Medical</h3>
+                            <div class="dept-stats">
+                                <span class="stat new" data-translate="new_cases">New: <span id="medicalNew">0</span></span>
+                                <span class="stat progress" data-translate="in_progress">Progress: <span id="medicalProgress">0</span></span>
+                                <span class="stat delayed" data-translate="delayed">Delayed: <span id="medicalDelayed">0</span></span>
+                            </div>
+                        </div>
+                        <div class="department-card sanitation">
+                            <h3 data-translate="sanitation">Sanitation</h3>
+                            <div class="dept-stats">
+                                <span class="stat new" data-translate="new_cases">New: <span id="sanitationNew">0</span></span>
+                                <span class="stat progress" data-translate="in_progress">Progress: <span id="sanitationProgress">0</span></span>
+                                <span class="stat delayed" data-translate="delayed">Delayed: <span id="sanitationDelayed">0</span></span>
+                            </div>
+                        </div>
+                        <div class="department-card crowd">
+                            <h3 data-translate="crowd_mgmt">Crowd Management</h3>
+                            <div class="dept-stats">
+                                <span class="stat new" data-translate="new_cases">New: <span id="crowdNew">0</span></span>
+                                <span class="stat progress" data-translate="in_progress">Progress: <span id="crowdProgress">0</span></span>
+                                <span class="stat delayed" data-translate="delayed">Delayed: <span id="crowdDelayed">0</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Routing Oversight -->
+                <div class="ai-routing-section">
+                    <h2 data-translate="ai_routing">AI Routing Oversight</h2>
+                    <div class="routing-table" id="routingTable">
+                        <div class="routing-header">
+                            <span data-translate="grievance_id">Grievance ID</span>
+                            <span data-translate="ai_department">AI Department</span>
+                            <span data-translate="confidence">Confidence</span>
+                            <span data-translate="action">Action</span>
+                        </div>
+                        <!-- Dynamic rows will be added here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="notificationSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sosSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-emergency-alert-siren-loop-1007.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="successSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- JavaScript Files -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"
+/>
+
+<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
+    <script src="languages.js"></script>
+    <script src="script.js"></script>
+    <script src="chatbot.js"></script>
+    <script src="grievance.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
