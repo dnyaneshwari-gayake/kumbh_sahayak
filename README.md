@@ -2,12 +2,12 @@
 
 This project is developed to help pilgrims and visitors.
 
-## Features
+# Features
 - Complaint registration
 - Navigation support
 - Live tracking
 
-## Technologies
+# Technologies
 - HTML
 - CSS
 - JavaScript
